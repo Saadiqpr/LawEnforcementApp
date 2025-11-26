@@ -17,3 +17,39 @@ router.route('/').get(async (req, res) => {
 });
 
 module.exports = router;
+// ... existing GET route code above ...
+
+// Action 2: CREATE a New Incident (POST)
+// This handles POST requests to /api/incidents/
+router.route('/').post(async (req, res) => {
+    try {
+        // 1. Get the new data out of the request body
+        const incidentID = req.body.incidentID;
+        const title = req.body.title;
+        const crimeType = req.body.crimeType;
+        const date = Date.parse(req.body.date); // Convert string date to real Date
+        const locationID = req.body.locationID;
+
+        // 2. Create a new Incident "book" using our blueprint
+        const newIncident = new Incident({
+            incidentID,
+            title,
+            crimeType,
+            date,
+            locationID,
+        });
+
+        // 3. Save the new book to the library shelves (database)
+        await newIncident.save();
+
+        // 4. Send a success message back
+        res.json('Incident added successfully!');
+
+    } catch (err) {
+        // If there's an error (like a duplicate incidentID), send it back
+        res.status(400).json('Error: ' + err);
+    }
+});
+
+// --- Place the new code ABOVE this line ---
+module.exports = router;
